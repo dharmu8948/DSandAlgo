@@ -1,0 +1,56 @@
+<template>
+    <div>
+        <h1 style="font-size: 36px;"><center><b>Welcome to user registration form</b></center></h1>
+    </div>
+    <lightning-layout multiple-rows>
+        <!-- Adjust layout-item sizes to fit all fields on one side -->
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="text" label="Name" onchange={nameHandler}></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="email" label="Email" onchange={emailHandler}></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-input type="text" label="LinkedIn Id" onchange={linkedInHandler}></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-combobox
+                name="Select your Profile"
+                label="Select your Profile"
+                value={selectedValue}
+                options={options1}
+                onchange={handleSelectChange1}
+            ></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-dual-listbox
+                name="You are Interested In"
+                label="You are Interested In"
+                source-label="Available Options"
+                selected-label="Selected Options"
+                options={options}
+                value={selectedValues}
+                onchange={handleSelectChange}
+            ></lightning-dual-listbox>
+        </lightning-layout-item>
+    </lightning-layout>
+    
+    <lightning-layout style="text-align: center;">
+        <lightning-layout-item size="6" padding="around-small"> <!-- Adjust size as needed -->
+            <lightning-button label="Save" variant="brand" onclick={handleClick}></lightning-button>
+        </lightning-layout-item>
+        <lightning-layout-item size="6" padding="around-small"> <!-- Adjust size as needed -->
+            <lightning-button label="Cancel" variant="error" onclick={handleClick}></lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+    <lightning-card title="Contacts">
+        <div class="slds-m-around_medium">
+            <lightning-datatable 
+                data={contacts} 
+                columns={columns} 
+                key-field="Id">
+            </lightning-datatable>
+        </div>
+    </lightning-card>
+</template>

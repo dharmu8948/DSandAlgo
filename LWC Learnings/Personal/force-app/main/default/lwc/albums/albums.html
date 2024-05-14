@@ -1,0 +1,25 @@
+<template>
+        <div class="album-section" style="display: flex;">
+            <template for:each={albumsDetails} for:item="category">
+                <li key={category.Id}  class="slds-nav-vertical__item" >
+                   
+                        <img src={category.Image} alt="unknown.jpg" />
+                  
+                        <h5>Album Name: {category.Name}</h5>
+                        <h5>Published Date: {category.PublishedDate}</h5>
+                        <h5>Price: {category.Price}</h5>
+                        <lightning-button 
+                          variant="base"
+                          label="Get Singer Details" 
+                          onclick={handleCategoryClick}
+                          value={category.SingerId}
+                        ></lightning-button>
+                </li>
+            </template>
+        </div>
+        <template lwc:if={isExists}>
+                    
+                        <c-singer-detail singer-details={singerDetail} ></c-singer-detail>
+                    
+        </template>
+</template>

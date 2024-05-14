@@ -1,0 +1,161 @@
+<template>
+    <!-- Showing the forms -->
+    <div class="slds-grid slds-grid_align-center let-full-body" style={getBackgroundImage} if:false={isRegistrationSuccess}>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 col-let">
+    <template if:false={loadLMSPage}>
+    <template if:false={isLoaded}>
+        <lightning-layout class="letsMeetHeading">
+            <lightning-layout-item size="7" padding="around-small">
+                <div class="LetsMeetLogo">
+                    <h1>Let's Meet</h1>
+                    <p>In</p>
+                    <p style="color:#00969c;">"WIT 2023"</p>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="3" padding="around-small">
+                <img src={LogoImage} style="max-width:120px;" class="zordialLogo"/>
+            </lightning-layout-item>
+        </lightning-layout>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12" padding="around-small">
+                    <lightning-input type="text" label="Name" onchange={nameHandler} required=""></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" padding="around-small">
+                    <lightning-input type="email" label="Email" onchange={emailHandler} required></lightning-input>
+            </lightning-layout-item>
+            <!-- <lightning-layout-item size="4" padding="around-small" class="send-otp-let">
+                <lightning-button variant="brand" label="Send OTP" onclick={handleOtp}></lightning-button>
+            </lightning-layout-item> -->
+            
+            <lightning-layout-item size="12" padding="around-small">
+                <lightning-input type="text" label="LinkedIn Id" onchange={linkedInHandler} required=""></lightning-input>
+           </lightning-layout-item>
+
+           <lightning-layout-item size="12" padding="around-small">
+                <lightning-combobox
+                    name="Select your Profile"
+                    label="Select your Profile"
+                    value={selectedValue}
+                    options={options1}
+                    onchange={handleSelectChange1}
+                    required
+                ></lightning-combobox>
+           </lightning-layout-item >
+                    <lightning-dual-listbox
+                            name="You are Interested In"
+                            label="You are Interested In"
+                            source-label="Available Options"
+                            selected-label="Selected Options"
+                            options={options}
+                            value={selectedValues}
+                            onchange={handleSelectChange}
+                            style="padding: 15px;width: 100%;"
+                            required
+                    ></lightning-dual-listbox>
+        </lightning-layout>
+        <lightning-layout-item size="5" padding="around-small">
+            <div if:true={isVerificationSuccessful}>
+                <p>OTP is verified successfully.</p>
+              </div>
+              <div if:true={isVerificationFailed}>
+                <p>OTP verification failed. Please Send OTP again.</p>
+              </div>
+        </lightning-layout-item>
+        <template if:true={isShowOTPButton}>
+            <lightning-layout style="justify-content: center; align-items: end;">
+                <lightning-layout-item size="6" padding="around-small">
+                    <lightning-input type="text" label="Enter Code" onchange={codeHandler}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="4" padding="around-small">
+                    <lightning-button variant="brand" label="Verify OTP" onclick={verifyOtp}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+        </template>
+        <lightning-layout style="text-align: center;display: block;">
+            <lightning-layout-item size="2" padding="around-small">
+                <!-- <lightning-button label="Register" variant="brand" onclick={handleClick} if:true={isRegistered}></lightning-button> -->
+            </lightning-layout-item>
+            <lightning-layout-item size="2" padding="around-small">
+                <lightning-button variant="brand" label="Send OTP" onclick={handleOtp} if:true={isSendOtp}></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </template>
+    <!-- Showing the DataTables -->
+    <template if:true={isLoaded}>
+        <div if:false={isRegistrationSuccess}>
+            <lightning-card if:false={showLMCode}>
+                <h2 style="font-size:17px;font-weight: 600;text-align:center;">Your Similar Profession Attendee in this event are...</h2>
+                <div  class="slds-m-around_medium">
+                    <lightning-datatable 
+                       key-field="Id"
+                       data={contacts} 
+                       columns={columns} 
+                       onrowselection={onRowSelectionHandle}
+                       max-row-selection="1"
+                       >
+                    </lightning-datatable>
+               </div>
+               <div class="centered-button">
+                <lightning-button label="Let's Meet" variant="brand" title="Let's Meet" onclick={handleConnectClick} class="slds-m-top_small"></lightning-button>
+            </div>
+             </lightning-card>
+        </div>
+    
+     <lightning-card if:true={isRegistrationSuccess}>
+        <div>
+            <h1 style="font-size: 36px;"><center><b>Thank you for Registration, we have send the details on registered Email</b></center></h1>
+        </div>
+     </lightning-card>
+    </template>
+   </template>
+    <!-- Showing meeting Code Screen -->
+    <template if:false={finalSubmit}>
+    <lightning-card if:true={showLMCode}>
+        <!-- start -->
+            <div class="LMSHeading">
+                <h1 style="font-size: 36px; text-align:center">Enter Meeting Code</h1>
+            </div>
+           <div class="slds-grid slds-grid_align-center" style="padding:0 15px;">
+                <div class="slds-col">
+                    <lightning-input label="" title="" onchange={meetingChangeHandler}></lightning-input>
+                </div>
+                <div class="slds-col" style="margin-top: 22px;margin-left: 10px;">
+                    <lightning-button label="Submit" variant="brand" title="Submit" onclick={letsConnectClick}></lightning-button>
+                </div>
+            </div>
+            
+        </lightning-card>
+    </template>
+        <div if:true={finalSubmit}>
+            <p>{label.MeetingMessage}</p>
+        </div>
+        <!-- end -->
+        
+    <!-- showing the LMS Code Screen -->
+    <template if:true={loadLMSPage}>
+        <lightning-card>
+            <div class="LMSHeading">
+                <h1 style="font-size: 36px; text-align:center">Enter UserId</h1>
+            </div>
+           <div class="slds-grid slds-grid_align-center" style="padding:0 15px;">
+                <div class="slds-col">
+                    <lightning-input type="text" label="" onchange={LMSCodeHandler}></lightning-input>
+                </div>
+                <div class="slds-col" style="margin-top: 24px;margin-left: 10px;">
+                    <lightning-button label="Validate" variant="brand" onclick={lmsHandleClick}></lightning-button>
+                </div>
+            </div>
+            
+        </lightning-card>
+            
+    </template>
+    </div>
+    </div>
+    <div style={getBackgroundImage}>
+        <lightning-card if:true={isRegistrationSuccess}>
+            <div>
+                <h1 style="font-size: 36px;"><center><b>Thank you for Registration, we have send the details on registered Email</b></center></h1>
+            </div>
+         </lightning-card>
+    </div>
+</template>

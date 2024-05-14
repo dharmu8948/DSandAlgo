@@ -1,0 +1,31 @@
+.getPadding {
+    margin-top: 24px;
+    margin-left: 10px;
+}
+.plus-button {
+    background-color: #0070d2; /* Background color of the button */
+    color: #fff; /* Text color of the button */
+    font-size: 20px; /* Font size of the plus sign */
+    width: 40px; /* Width of the button */
+    height: 40px; /* Height of the button */
+    border: none; /* Remove button border */
+    border-radius: 50%; /* Make it round */
+    cursor: pointer; /* Change cursor on hover */
+}
+
+.plus-button:hover {
+    background-color: #0059b3; /* Change background color on hover */
+}
+.button-center{
+    margin-left: 180px;
+    margin-top: 68px;
+}
+.image-container img {
+    width: 250px; /* Set the desired width */
+    height: 150px; /* Set the desired height */
+    object-fit: fill; /* This property can help maintain aspect ratio */
+    margin: 10px; /* Add margin to separate images if needed */
+}
+.input-margin{
+    
+}

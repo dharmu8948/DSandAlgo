@@ -1,0 +1,15 @@
+<template>
+    <div class="album-section">
+        <template lwc:if={singerDetails}>
+            <li class="slds-nav-vertical__item">
+            <img src={singerDetails.Singer_Image__c} alt="unknown.jpg"  />
+            <h5>Singer Name: {singerDetails.Name}</h5>
+            <h5>Category : {singerDetails.Categories__c}</h5>
+            <h5>Email: {singerDetails.Email__c}</h5>
+            <h5>Phone: {singerDetails.Phone__c}</h5>
+            <h5>Birth Date: {singerDetails.DOB__c}</h5>
+            <h5>Address: {singerDetails.Address__c}</h5>
+        </li>
+        </template>
+    </div>
+</template>
