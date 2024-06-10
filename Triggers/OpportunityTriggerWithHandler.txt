@@ -1,0 +1,74 @@
+//Create fields on Account Object called total won Opportunity(Number type) and Won amount(Currency Type)
+// after that calculate total won amount and total won opportunities and store values in the respected fields
+
+//---------------------------------------------   Trigger Class       ---------------------------------------------------
+
+trigger OpportunityWonTrigger on Opportunity (after insert, after update, after delete) {
+    if(Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)) {
+        OpportunityWonTriggerHelper.calculateWonOpps(Trigger.New);
+    }
+    if(Trigger.isAfter && (Trigger.isDelete || Trigger.isUpdate)) {
+        OpportunityWonTriggerHelper.calculateWonOpps(Trigger.Old);
+    }
+}
+//---------------------------------------------   Handler Class       ---------------------------------------------------
+public class OpportunityWonTriggerHelper {
+    public static void calculateWonOpps(List<Opportunity> opportunityList) {
+     //    Approach 1
+     /*   
+        Set<String> accountIds = new Set<String>();
+        List<Account> accountListToUpdate = new List<Account>();
+        // get All AccountIds
+        for(Opportunity opps : opportunityList) {
+            accountIds.add(opps.AccountId);
+        }
+        // get all opportunity for account
+       // List<Account> accountList = [Select Id, (Select Id, Amount FROM Opportunities WHERE StageName = 'Closed Won') FROM Account WHERE Id IN :accountIds]; // can we store into AccountId vs Opp
+        Map<String, List<Opportunity>> mpOfIdVsOpps = new Map<String, List<Opportunity>>();
+        for(Account acc : [Select Id, (Select Id, Amount FROM Opportunities WHERE StageName = 'Closed Won') FROM Account WHERE Id IN :accountIds]) {
+           mpOfIdVsOpps.put(acc.Id, acc.Opportunities); 
+        }
+        System.debug('mpOfIdVsOpps:: '+mpOfIdVsOpps);
+        for(String accId : accountIds ) {
+            List<Opportunity> oppList = mpOfIdVsOpps.get(accId);
+            Decimal count = 0, sum = 0;
+            for(Integer index = 0;index<oppList.size();index++) {
+                count++;
+                sum  = sum + oppList[index].Amount;
+            }
+            Account accountRecord = new Account();
+            accountRecord.Id = accId;
+            accountRecord.Total_Won_Opportunity__c = count;
+            accountRecord.Won_Amount__c = sum;
+            accountListToUpdate.add(accountRecord);
+        }
+        System.debug('accountListToUpdate:: '+accountListToUpdate);
+        if(!accountListToUpdate.isEmpty()) {
+            update accountListToUpdate;
+        }
+         */
+        // Approach 2
+        Set<Id> accountIds = new Set<Id>();
+        for(Opportunity oppRec: opportunityList){
+            accountIds.add(oppRec.accountId);
+        }
+        Map<Id,Decimal> mapOfIdVsWonOpportunities = new Map<Id,Decimal>();
+        Map<Id,Decimal> mapOfIdVsWonAmount = new Map<Id,Decimal>();
+        
+        for(AggregateResult rslt : [SELECT count(Id) wonOpp , Sum(Amount) wonAmount , AccountId FROM Opportunity WHERE StageName = 'Closed Won' GROUP BY AccountId]){
+            mapOfIdVsWonOpportunities.put((Id)rslt.get('AccountId') , (Decimal)rslt.get('wonOpp'));
+            mapOfIdVsWonAmount.put((Id)rslt.get('AccountId') , (Decimal)rslt.get('wonAmount'));
+        }
+        
+        List<Account> accListToUpdate = new List<Account>();
+        for(Id accId :accountIds){
+            if(mapOfIdVsWonOpportunities.containsKey(accId) && mapOfIdVsWonAmount.containsKey(accId)){
+                Account acc = new Account(Id = accId , Total_Won_Opportunity__c = mapOfIdVsWonOpportunities.get(accId),Won_Amount__c=mapOfIdVsWonAmount.get(accId));
+                accListToUpdate.add(acc);
+            }
+        }
+        if(accListToUpdate.size()>0){
+            update accListToUpdate;
+        }
+    }
+}
